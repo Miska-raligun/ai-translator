@@ -1,0 +1,21 @@
+# 编译中间文件
+*.o
+*.obj
+*.exe
+*.a
+*.lib
+*.dll
+*.so
+*.user
+*.pro.user
+build-*/
+.qmake.stash
+Makefile
+*.log
+
+# Python 虚拟环境
+translator_env/
+
+# Qt Creator 配置
+*.autosave
+*.qrc.dep
