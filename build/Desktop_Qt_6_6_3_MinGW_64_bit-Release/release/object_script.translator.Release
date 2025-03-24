@@ -1,0 +1,11 @@
+release/main.o
+release/input_hook.o
+release/mainwindow.o
+release/openai_translator.o
+release/mytextedit.o
+release/model_config_dialog.o
+release/moc_mainwindow.o
+release/moc_input_hook.o
+release/moc_openai_translator.o
+release/moc_mytextedit.o
+release/moc_model_config_dialog.o

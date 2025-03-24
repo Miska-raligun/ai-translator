@@ -1,0 +1,11 @@
+debug/main.o
+debug/input_hook.o
+debug/mainwindow.o
+debug/openai_translator.o
+debug/mytextedit.o
+debug/model_config_dialog.o
+debug/moc_mainwindow.o
+debug/moc_input_hook.o
+debug/moc_openai_translator.o
+debug/moc_mytextedit.o
+debug/moc_model_config_dialog.o
