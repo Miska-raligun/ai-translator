@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
-    <height>360</height>
+    <width>500</width>
+    <height>420</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,11 +16,43 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="MyTextEdit" name="sourceTextEdit">
-      <property name="placeholderText">
+     <widget class="MyTextEdit" name="sourceTextEdit" native="true">
+      <property name="placeholderText" stdset="0">
        <string>Enter text to translate...</string>
       </property>
      </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="modeLayout">
+      <item>
+       <widget class="QLabel" name="modeLabel">
+        <property name="text">
+         <string>触发模式：</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="modeComboBox">
+        <item>
+         <property name="text">
+          <string>模式 1（左键按住 + 同时右键）</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>模式 2（暂不支持）</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="modelConfigButton">
+        <property name="text">
+         <string>模型配置</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
      <widget class="QTextEdit" name="resultTextEdit">
@@ -32,18 +64,17 @@
       </property>
      </widget>
     </item>
-    <item>
-     <widget class="QPushButton" name="translateButton">
-      <property name="text">
-       <string>Translate</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar"/>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MyTextEdit</class>
+   <extends>QWidget</extends>
+   <header>mytextedit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

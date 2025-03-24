@@ -18,15 +18,32 @@ void OpenAITranslator::setApiUrl(const QString &url) {
     apiUrl = url;
 }
 
+void OpenAITranslator::setModel(const QString &model) {
+    Model = model;
+}
+
+void OpenAITranslator::setTemperature(const double &temperature) {
+    Temperature = temperature;
+}
+
 void OpenAITranslator::translateText(const QString &text) {
-    QJsonObject message1{{"role", "system"}, {"content", "You are a translation assistant. Your job is to translate the user's input into either Chinese or English, depending on the source language. Just return the translated text only, without any explanation or extra information."}};
+    QJsonObject message1{
+        {"role", "system"},
+        {"content",
+         "You are a professional technical translator. "
+         "When the input is in Chinese, translate it into English. "
+         "When the input is in any other language, translate it into Chinese. "
+         "Ensure the translation style is accurate, concise, and technically appropriate. "
+         "For long paragraphs, split them into shorter logical units and translate them accordingly. "
+         "Do not include any explanations or extra information. Output the translated content only."}
+    };
     QJsonObject message2{{"role", "user"}, {"content", text}};
 
     QJsonArray messages{message1, message2};
     QJsonObject body;
-    body["model"] = "Pro/deepseek-ai/DeepSeek-V3";  // 替换为你的平台模型
+    body["model"] = Model;  // 替换为你的平台模型
     body["messages"] = messages;
-    body["temperature"] = 0.3;
+    body["temperature"] = Temperature;
 
     QNetworkRequest request((QUrl(apiUrl)));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");

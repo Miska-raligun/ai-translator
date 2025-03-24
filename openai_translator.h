@@ -12,6 +12,8 @@ public:
 
     void setApiKey(const QString &key);
     void setApiUrl(const QString &url);
+    void setModel(const QString &model);
+    void setTemperature(const double &temperature);
     void translateText(const QString &text);
 
 signals:
@@ -24,6 +26,8 @@ private slots:
 private:
     QString apiKey;
     QString apiUrl;
+    QString Model;
+    double Temperature;
     QNetworkAccessManager *networkManager;
 };
 

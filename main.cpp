@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     QApplication::setFont(font);
 
     MainWindow w;
-    w.setWindowTitle("Mini Translator");
+    w.setWindowTitle("AI Translator");
     w.show();
     return a.exec();
 }
