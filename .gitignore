@@ -16,6 +16,9 @@ Makefile
 # Python 虚拟环境
 translator_env/
 
+#build目录
+build/
+
 # Qt Creator 配置
 *.autosave
 *.qrc.dep
