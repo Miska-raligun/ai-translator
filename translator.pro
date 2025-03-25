@@ -20,3 +20,8 @@ win32: LIBS += -luser32
 FORMS += mainwindow.ui \
          model_config_dialog.ui
 
+RESOURCES += \
+    resource.qrc
+
+RC_FILE = appicon.rc
+

@@ -2,22 +2,24 @@
 #include "ui_mainwindow.h"
 #include "model_config_dialog.h"
 #include <QTimer>
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::MainWindow)
 {
-
     ui->setupUi(this);
-    setWindowFlag(Qt::WindowStaysOnTopHint); // 窗口悬浮置顶
-    ui->modeComboBox->setCurrentIndex(0);    // 默认选中模式1
+    setWindowIcon(QIcon(":/tomorin.ico")); //增加图标
+    setWindowFlag(Qt::WindowStaysOnTopHint);
+    ui->modeComboBox->setCurrentIndex(0);
 
     connect(ui->modelConfigButton, &QPushButton::clicked,
             this, &MainWindow::on_modelConfigButton_clicked);
 
-    // 初始化翻译器
     translator = new OpenAITranslator(this);
-    // 🚀 启动弹出模型配置对话框
-    QTimer::singleShot(0, this, [=]() {
+    QSettings settings("MiniTranslator", "UserConfig");
+
+    bool hasConfig = settings.contains("customSelected");
+    if (!hasConfig) {
         ModelConfigDialog dialog(this);
         if (dialog.exec() == QDialog::Accepted) {
             if (dialog.isCustomSelected()) {
@@ -32,18 +34,31 @@ MainWindow::MainWindow(QWidget *parent)
                 translator->setTemperature(0.3);
             }
         } else {
-            close(); // 用户关闭配置窗口时，关闭主窗口
+            close();
+            return;
         }
-    });
+    } else {
+        bool useCustom = settings.value("customSelected", false).toBool();
+        if (useCustom) {
+            translator->setApiKey(settings.value("apiKey").toString());
+            translator->setApiUrl(settings.value("apiUrl").toString());
+            translator->setModel(settings.value("model").toString());
+            translator->setTemperature(settings.value("temperature", 0.3).toDouble());
+        } else {
+            translator->setApiKey("your-api-key");
+            translator->setApiUrl("https://api.siliconflow.cn/v1/chat/completions");
+            translator->setModel("Pro/deepseek-ai/DeepSeek-V3");
+            translator->setTemperature(0.3);
+        }
+    }
 
-    InputHook::triggerMode = 0;
+    // 按钮翻译（如你有此按钮）
+    // connect(ui->translateButton, &QPushButton::clicked, this, &MainWindow::on_translateButton_clicked);
 
-    //connect(ui->translateButton, &QPushButton::clicked,
-            //this, &MainWindow::on_translateButton_clicked);
-
+    // 翻译结果处理
     connect(translator, &OpenAITranslator::translationFinished, this, [=](const QString &result) {
         ui->resultTextEdit->setPlainText(result);
-        QGuiApplication::clipboard()->clear(); // 翻译完成后清空剪贴板
+        QGuiApplication::clipboard()->clear();
     });
 
     connect(translator, &OpenAITranslator::translationFailed, this, [=](const QString &err) {
@@ -53,26 +68,23 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->sourceTextEdit, &QTextEdit::selectionChanged, this, [=]() {
         QString selectedText = ui->sourceTextEdit->textCursor().selectedText();
         if (!selectedText.isEmpty()) {
-            QClipboard *clipboard = QGuiApplication::clipboard();
-            clipboard->setText(selectedText);
+            QGuiApplication::clipboard()->setText(selectedText);
         }
     });
 
 #ifdef Q_OS_WIN
     connect(ui->modeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged),
             this, [=](int index) {
-        InputHook::triggerMode = index;
-        qDebug() << "切换到触发模式:" << index;
-
-        if (index == 0) {
-            hook->stopHook();
-            hook->startHook();
-            hook->unregisterHotkey(HWND(winId()));
-        } else {
-            hook->stopHook();
-            hook->registerHotkey(HWND(winId()));
-        }
-    });
+                InputHook::triggerMode = index;
+                if (index == 0) {
+                    hook->stopHook();
+                    hook->startHook();
+                    hook->unregisterHotkey(HWND(winId()));
+                } else {
+                    hook->stopHook();
+                    hook->registerHotkey(HWND(winId()));
+                }
+            });
 
     hook = new InputHook(this);
     connect(hook, &InputHook::translateTrigger, this, [=]() {
@@ -83,14 +95,13 @@ MainWindow::MainWindow(QWidget *parent)
         } else {
             ui->resultTextEdit->setPlainText("未检测到剪贴板内容，请确保目标文字已选中。");
         }
-        QGuiApplication::clipboard()->clear(); // 模式1：翻译后清空
+        QGuiApplication::clipboard()->clear();
     });
 
     hook->startHook();
 #else
     mouseWatcher = new QProcess(this);
     mouseWatcher->start("python3", QStringList() << "mouse_watcher.py");
-
     connect(mouseWatcher, &QProcess::readyReadStandardOutput, this, [=]() {
         QString output = mouseWatcher->readAllStandardOutput();
         if (output.contains("[TRANSLATE_TRIGGER]")) {
@@ -101,6 +112,7 @@ MainWindow::MainWindow(QWidget *parent)
     });
 #endif
 }
+
 
 MainWindow::~MainWindow()
 {
