@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>213</height>
+    <height>236</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,6 +39,13 @@
     <widget class="QLineEdit" name="modelEdit">
      <property name="placeholderText">
       <string>模型名称</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Temperature</string>
      </property>
     </widget>
    </item>

@@ -24,4 +24,3 @@ RESOURCES += \
     resource.qrc
 
 RC_FILE = appicon.rc
-

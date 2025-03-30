@@ -12,12 +12,26 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowFlag(Qt::WindowStaysOnTopHint);
     ui->modeComboBox->setCurrentIndex(0);
 
+    // 连接信号槽 - 新增字体缩放按钮连接
+    connect(ui->zoomInButton, &QPushButton::clicked, this, &MainWindow::onZoomIn);
+    connect(ui->zoomOutButton, &QPushButton::clicked, this, &MainWindow::onZoomOut);
+
+    // 读取保存的字体大小（默认值12）
+    //QSettings settings("MiniTranslator", "FontSettings");
+    //m_currentFontSize = settings.value("fontSize", 12).toInt();
+
+    //读取所有的ui偏好
+    readSettings();
+
+    // 初始化字体
+    updateFontSize();
+
     connect(ui->modelConfigButton, &QPushButton::clicked,
             this, &MainWindow::on_modelConfigButton_clicked);
 
     translator = new OpenAITranslator(this);
-    QSettings settings("MiniTranslator", "UserConfig");
 
+    QSettings settings("MiniTranslator", "UserConfig");
     bool hasConfig = settings.contains("customSelected");
     if (!hasConfig) {
         ModelConfigDialog dialog(this);
@@ -116,6 +130,11 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    // 保存字体大小偏好
+    //QSettings settings("MiniTranslator", "FontSettings");
+    //settings.setValue("fontSize", m_currentFontSize);
+    //保存ui偏好
+    writeSettings();
     delete ui;
 #ifdef Q_OS_WIN
     hook->unregisterHotkey(HWND(winId()));
@@ -169,4 +188,58 @@ void MainWindow::on_modelConfigButton_clicked()
             translator->setTemperature(0.3);
         }
     }
+}
+
+// 新增字体缩放功能实现
+void MainWindow::onZoomIn()
+{
+    m_currentFontSize += m_fontSizeStep;
+    if(m_currentFontSize > 36) {
+        m_currentFontSize = 36;
+    }
+    updateFontSize();
+}
+
+void MainWindow::onZoomOut()
+{
+    m_currentFontSize -= m_fontSizeStep;
+    if(m_currentFontSize < 8) {
+        m_currentFontSize = 8;
+    }
+    updateFontSize();
+}
+
+void MainWindow::updateFontSize()
+{
+    QFont font;
+    font.setPointSize(m_currentFontSize);
+
+    // 应用到输入和输出文本框
+    ui->sourceTextEdit->setFont(font);
+    ui->resultTextEdit->setFont(font);
+
+    // 可选：在状态栏显示当前字体大小
+    ui->statusbar->showMessage(QString("当前字体大小: %1").arg(m_currentFontSize), 2000);
+}
+
+// 保存
+void MainWindow::writeSettings()
+{
+    QSettings settings("MiniTranslator", "AppSettings");
+    settings.beginGroup("MainWindow");
+    settings.setValue("size", size());
+    settings.setValue("pos", pos());
+    settings.setValue("fontSize", m_currentFontSize);
+    settings.endGroup();
+}
+
+// 恢复
+void MainWindow::readSettings()
+{
+    QSettings settings("MiniTranslator", "AppSettings");
+    settings.beginGroup("MainWindow");
+    resize(settings.value("size", QSize(365, 420)).toSize());
+    move(settings.value("pos", QPoint(200, 200)).toPoint());
+    m_currentFontSize = settings.value("fontSize", 12).toInt();
+    settings.endGroup();
 }

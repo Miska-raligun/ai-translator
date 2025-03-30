@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>365</width>
-    <height>420</height>
+    <width>454</width>
+    <height>706</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,22 +25,41 @@
     <item>
      <layout class="QHBoxLayout" name="modeLayout">
       <item>
-       <widget class="QLabel" name="modeLabel">
+       <widget class="QPushButton" name="zoomInButton">
         <property name="text">
-         <string>触发模式：</string>
+         <string>放大</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="zoomOutButton">
+        <property name="minimumSize">
+         <size>
+          <width>75</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>缩小</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QComboBox" name="modeComboBox">
+        <property name="maximumSize">
+         <size>
+          <width>191</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <item>
          <property name="text">
-          <string>模式 1（左键按住 + 同时右键）</string>
+          <string>模式1：左键选中+按下右键</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>模式 2（暂不支持）</string>
+          <string>模式2：暂不支持</string>
          </property>
         </item>
        </widget>
